@@ -14,6 +14,15 @@ import uranusRingTexture from '../img/uranus ring.png';
 import neptuneTexture from '../img/neptune.jpg';
 import plutoTexture from '../img/pluto.jpg';
 
+const progressBarContainer = document.querySelector('.progress-bar-container');
+const progressBar = document.getElementById('progress-bar');
+THREE.DefaultLoadingManager.onLoad = function ( ) {
+    progressBarContainer.style.display = 'none';
+};
+THREE.DefaultLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+	progressBar.value = itemsLoaded / itemsTotal * 100;
+};
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -51,11 +60,13 @@ const sunMaterial = new THREE.MeshBasicMaterial({
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
+const textureLoader = new THREE.TextureLoader();
+
 const createPlanet = (radius, texture, x, ringPlanet) => {
     const geometry = new THREE.SphereGeometry(radius, 35, 35);
-    const material = new THREE.MeshStandardMaterial({
-        map: new THREE.TextureLoader().load(texture),
-    });
+    const material = new THREE.MeshStandardMaterial();
+    var tex = textureLoader.load(texture);
+    material.map = tex;
     const planet = new THREE.Mesh(geometry, material);
     planet.position.x = x;
     const origin = new THREE.Object3D();
